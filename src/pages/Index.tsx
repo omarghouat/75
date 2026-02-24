@@ -40,12 +40,13 @@ const Index = () => {
     setState(prev => ({ ...prev, challenges, status: 'confirming' }));
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (reorderedChallenges: Challenge[]) => {
     setState(prev => ({ 
       ...prev, 
+      challenges: reorderedChallenges,
       status: 'active', 
       startDate: new Date().toISOString(),
-      dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {})
+      dailyProgress: reorderedChallenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {})
     }));
     showSuccess("Challenge Started! Day 1 begins now.");
   };
