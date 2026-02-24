@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef } from 'react';
-import { CheckCircle2, Circle, Calendar, Clock, Camera, Spade, XCircle, Trophy, Upload } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { CheckCircle2, Calendar, Clock, Camera, Spade, XCircle, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Challenge, DailyProgress } from '@/types/challenge';
 import { cn } from '@/lib/utils';
@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProgressCalendar from './ProgressCalendar';
+import FailureDialog from './FailureDialog';
 
 interface DashboardProps {
   day: number;
@@ -29,6 +30,7 @@ interface DashboardProps {
 
 const Dashboard = ({ day, challenges, progress, history, photos, onToggle, onFail, onCompleteDay, onPhotoUpload }: DashboardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
   const completedCount = Object.values(progress).filter(Boolean).length;
   const totalCount = challenges.length;
   const today = new Date();
@@ -170,13 +172,19 @@ const Dashboard = ({ day, challenges, progress, history, photos, onToggle, onFai
         )}
 
         <button 
-          onClick={onFail}
+          onClick={() => setIsFailureModalOpen(true)}
           className="w-full py-4 text-zinc-600 hover:text-rose-500 text-xs font-black uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
         >
           <XCircle className="w-4 h-4" />
           I Failed Today (Restart)
         </button>
       </div>
+
+      <FailureDialog 
+        isOpen={isFailureModalOpen} 
+        onClose={() => setIsFailureModalOpen(false)} 
+        onConfirmReset={onFail} 
+      />
     </div>
   );
 };

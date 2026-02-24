@@ -8,7 +8,7 @@ import { Challenge, ChallengeState, DailyProgress } from '@/types/challenge';
 import { showSuccess, showError } from '@/utils/toast';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 
-const STORAGE_KEY = '75hard_state_v2'; // Versioned key for new schema
+const STORAGE_KEY = '75hard_state_v2';
 
 const Index = () => {
   const [state, setState] = useState<ChallengeState>(() => {
@@ -55,7 +55,6 @@ const Index = () => {
 
   const handlePhotoUpload = (day: number, base64: string) => {
     setState(prev => {
-      // Find the photo task ID to auto-check it
       const photoTask = prev.challenges.find(c => 
         c.text.toLowerCase().includes('photo') || c.text.toLowerCase().includes('picture')
       );
@@ -91,17 +90,14 @@ const Index = () => {
   };
 
   const handleFail = () => {
-    const confirmRestart = window.confirm("Are you sure? This will reset your progress to Day 1.");
-    if (confirmRestart) {
-      setState(prev => ({
-        ...prev,
-        currentDay: 1,
-        dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {}),
-        history: {},
-        photos: {} // Optional: keep photos or clear them? Usually 75 Hard clears everything.
-      }));
-      showError("Challenge restarted. Day 1 starts again.");
-    }
+    setState(prev => ({
+      ...prev,
+      currentDay: 1,
+      dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {}),
+      history: {},
+      photos: {}
+    }));
+    showError("Challenge restarted. Day 1 starts again.");
   };
 
   return (
