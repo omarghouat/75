@@ -14,4 +14,5 @@ export interface ChallengeState {
   startDate: string | null;
   dailyProgress: DailyProgress;
   history: Record<number, DailyProgress>;
+  photos: Record<number, string>; // Day number to base64 image string
 }
