@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { CheckCircle2, Calendar, Clock, Camera, Spade, XCircle, Trophy, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Challenge, DailyProgress } from '@/types/challenge';
+import { Challenge, DailyProgress, ChallengeState } from '@/types/challenge';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -23,17 +23,19 @@ interface DashboardProps {
   history: Record<number, any>;
   photos: Record<number, string>;
   notes: string;
+  profile: ChallengeState['profile'];
   onToggle: (id: string) => void;
   onFail: () => void;
   onCompleteDay: () => void;
   onPhotoUpload: (day: number, base64: string) => void;
   onUpdateNotes: (notes: string) => void;
   onUpdateReminder: (id: string, time: string) => void;
+  onUpdateProfile: (profile: Partial<ChallengeState['profile']>) => void;
 }
 
 const Dashboard = ({ 
-  day, challenges, progress, history, photos, notes, 
-  onToggle, onFail, onCompleteDay, onPhotoUpload, onUpdateNotes, onUpdateReminder 
+  day, challenges, progress, history, photos, notes, profile,
+  onToggle, onFail, onCompleteDay, onPhotoUpload, onUpdateNotes, onUpdateReminder, onUpdateProfile
 }: DashboardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
@@ -71,7 +73,13 @@ const Dashboard = ({
             </button>
           </DialogTrigger>
           <DialogContent className="bg-black border-zinc-800 text-white max-w-[95vw] sm:max-w-md rounded-3xl p-6 overflow-y-auto max-h-[90vh] custom-scrollbar">
-            <ProgressCalendar currentDay={day} history={history} photos={photos} />
+            <ProgressCalendar 
+              currentDay={day} 
+              history={history} 
+              photos={photos} 
+              profile={profile}
+              onUpdateProfile={onUpdateProfile}
+            />
           </DialogContent>
         </Dialog>
       </header>

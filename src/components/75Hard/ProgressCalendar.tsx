@@ -1,35 +1,53 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Camera, ChevronLeft, Edit3, X, Check, User, Clock } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Camera, ChevronLeft, Edit3, X, User, Clock, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { showSuccess } from '@/utils/toast';
+import { ChallengeState } from '@/types/challenge';
 
 interface ProgressCalendarProps {
   currentDay: number;
   history: Record<number, any>;
   photos: Record<number, string>;
+  profile: ChallengeState['profile'];
+  onUpdateProfile: (profile: Partial<ChallengeState['profile']>) => void;
 }
 
-const ProgressCalendar = ({ currentDay, history, photos }: ProgressCalendarProps) => {
+const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfile }: ProgressCalendarProps) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [userName, setUserName] = useState("User Progress");
-  const [dayEndTime, setDayEndTime] = useState("1:00 AM");
+  const [tempName, setTempName] = useState(profile.name);
+  const [tempEndTime, setTempEndTime] = useState(profile.dayEndTime);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   
   const days = Array.from({ length: 75 }, (_, i) => i + 1);
 
   const handleSaveSettings = () => {
+    onUpdateProfile({
+      name: tempName,
+      dayEndTime: tempEndTime
+    });
     setIsSettingsOpen(false);
     showSuccess("Settings updated successfully");
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onUpdateProfile({ avatar: reader.result as string });
+        showSuccess("Profile picture updated");
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (isSettingsOpen) {
@@ -44,17 +62,43 @@ const ProgressCalendar = ({ currentDay, history, photos }: ProgressCalendarProps
             <span className="text-xs font-bold uppercase">Back</span>
           </button>
           <h3 className="font-impact text-xl tracking-tight">SETTINGS</h3>
-          <div className="w-10" /> {/* Spacer */}
+          <div className="w-10" />
         </div>
 
         <div className="space-y-6 px-2">
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-full bg-zinc-800 overflow-hidden border-4 border-zinc-700">
+                {profile.avatar ? (
+                  <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.name}`} alt="Profile" />
+                )}
+              </div>
+              <button 
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+              >
+                <Upload className="w-6 h-6 text-white" />
+              </button>
+              <input 
+                type="file" 
+                ref={avatarInputRef} 
+                className="hidden" 
+                accept="image/*" 
+                onChange={handleAvatarChange} 
+              />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Tap to change photo</p>
+          </div>
+
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Profile Name</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
               <Input 
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
                 className="bg-zinc-900 border-zinc-800 pl-12 h-14 rounded-xl focus-visible:ring-rose-600"
               />
             </div>
@@ -65,8 +109,8 @@ const ProgressCalendar = ({ currentDay, history, photos }: ProgressCalendarProps
             <div className="relative">
               <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
               <Input 
-                value={dayEndTime}
-                onChange={(e) => setDayEndTime(e.target.value)}
+                value={tempEndTime}
+                onChange={(e) => setTempEndTime(e.target.value)}
                 className="bg-zinc-900 border-zinc-800 pl-12 h-14 rounded-xl focus-visible:ring-rose-600"
               />
             </div>
@@ -89,11 +133,15 @@ const ProgressCalendar = ({ currentDay, history, photos }: ProgressCalendarProps
       <div className="flex items-center justify-between px-2">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-zinc-800 overflow-hidden border-2 border-zinc-700">
-            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`} alt="Profile" />
+            {profile.avatar ? (
+              <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.name}`} alt="Profile" />
+            )}
           </div>
           <div>
-            <h3 className="font-bold text-lg">{userName}</h3>
-            <p className="text-zinc-500 text-xs font-bold uppercase">Day Ends: {dayEndTime}</p>
+            <h3 className="font-bold text-lg">{profile.name}</h3>
+            <p className="text-zinc-500 text-xs font-bold uppercase">Day Ends: {profile.dayEndTime}</p>
           </div>
         </div>
         <button 

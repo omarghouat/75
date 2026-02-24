@@ -9,7 +9,7 @@ import { Challenge, ChallengeState } from '@/types/challenge';
 import { showSuccess, showError } from '@/utils/toast';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 
-const STORAGE_KEY = '75hard_state_v3';
+const STORAGE_KEY = '75hard_state_v4';
 
 const Index = () => {
   const [state, setState] = useState<ChallengeState>(() => {
@@ -23,7 +23,12 @@ const Index = () => {
       dailyProgress: {},
       history: {},
       photos: {},
-      notes: ''
+      notes: '',
+      profile: {
+        name: 'User Progress',
+        avatar: null,
+        dayEndTime: '1:00 AM'
+      }
     };
   });
 
@@ -71,6 +76,13 @@ const Index = () => {
     setState(prev => ({
       ...prev,
       challenges: prev.challenges.map(c => c.id === id ? { ...c, reminderTime: time } : c)
+    }));
+  };
+
+  const handleUpdateProfile = (profile: Partial<ChallengeState['profile']>) => {
+    setState(prev => ({
+      ...prev,
+      profile: { ...prev.profile, ...profile }
     }));
   };
 
@@ -128,12 +140,14 @@ const Index = () => {
           history={state.history}
           photos={state.photos}
           notes={state.notes}
+          profile={state.profile}
           onToggle={handleToggleTask}
           onFail={handleFail}
           onCompleteDay={handleCompleteDay}
           onPhotoUpload={handlePhotoUpload}
           onUpdateNotes={(notes) => setState(prev => ({ ...prev, notes }))}
           onUpdateReminder={handleUpdateReminder}
+          onUpdateProfile={handleUpdateProfile}
         />
       )}
 

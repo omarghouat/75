@@ -17,4 +17,9 @@ export interface ChallengeState {
   history: Record<number, { progress: DailyProgress; notes: string }>;
   photos: Record<number, string>;
   notes: string;
+  profile: {
+    name: string;
+    avatar: string | null;
+    dayEndTime: string;
+  };
 }
