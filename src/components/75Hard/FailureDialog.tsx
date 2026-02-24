@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { AlertOctagon, Skull, Trophy } from 'lucide-react';
+import { AlertOctagon, Skull } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -36,7 +36,7 @@ const FailureDialog = ({ isOpen, onClose, onConfirmReset }: FailureDialogProps) 
           <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 mb-2">
             {step === 1 ? <Skull className="w-8 h-8" /> : <AlertOctagon className="w-8 h-8" />}
           </div>
-          <DialogTitle className="text-2xl font-black tracking-tighter uppercase text-center leading-tight">
+          <DialogTitle className="text-3xl font-impact text-center leading-tight">
             {step === 1 ? "FAILURE DETECTED" : "ONE LAST CHANCE"}
           </DialogTitle>
         </DialogHeader>
@@ -52,14 +52,14 @@ const FailureDialog = ({ isOpen, onClose, onConfirmReset }: FailureDialogProps) 
             {step === 1 ? (
               <Button 
                 onClick={() => setStep(2)}
-                className="h-14 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-lg uppercase tracking-widest"
+                className="h-14 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-lg uppercase tracking-widest-custom"
               >
                 I AGREE
               </Button>
             ) : (
               <Button 
                 onClick={handleReset}
-                className="h-14 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-lg uppercase tracking-widest"
+                className="h-14 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-lg uppercase tracking-widest-custom"
               >
                 NO, I WILL WIN
               </Button>
@@ -68,7 +68,7 @@ const FailureDialog = ({ isOpen, onClose, onConfirmReset }: FailureDialogProps) 
             <Button 
               variant="ghost" 
               onClick={handleClose}
-              className="text-zinc-500 hover:text-white hover:bg-transparent"
+              className="text-zinc-500 hover:text-white hover:bg-transparent font-bold uppercase tracking-widest-custom text-[10px]"
             >
               Wait, I didn't fail
             </Button>

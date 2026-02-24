@@ -47,7 +47,7 @@ const Setup = ({ onComplete }: SetupProps) => {
           </div>
           <span className="text-xs font-black tracking-[0.3em] mt-2">HARD</span>
         </div>
-        <h1 className="text-4xl font-black tracking-tighter text-white uppercase">Define Your Rules</h1>
+        <h1 className="text-4xl font-impact text-white uppercase">Define Your Rules</h1>
       </div>
 
       <div className="space-y-1">
