@@ -1,13 +1,12 @@
 "use client";
 
 import React from 'react';
-import { CheckCircle2, Circle, Trophy, XCircle, RefreshCcw } from 'lucide-react';
+import { CheckCircle2, Circle, Calendar, Clock, Camera, Spade, XCircle, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Challenge, DailyProgress } from '@/types/challenge';
 import { cn } from '@/lib/utils';
-import { showSuccess, showError } from '@/utils/toast';
+import { format } from 'date-fns';
 
 interface DashboardProps {
   day: number;
@@ -21,79 +20,100 @@ interface DashboardProps {
 const Dashboard = ({ day, challenges, progress, onToggle, onFail, onCompleteDay }: DashboardProps) => {
   const completedCount = Object.values(progress).filter(Boolean).length;
   const totalCount = challenges.length;
-  const percentComplete = (day / 75) * 100;
+  const today = new Date();
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <header className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h2 className="text-slate-400 font-bold tracking-widest text-xs uppercase">Current Progress</h2>
-          <h1 className="text-5xl font-black text-white tracking-tighter">DAY {day}<span className="text-orange-500">/75</span></h1>
+    <div className="space-y-10 animate-in fade-in duration-700 max-w-md mx-auto">
+      {/* Header Section */}
+      <header className="flex items-start justify-between pt-4">
+        <div className="flex flex-col items-center">
+          <div className="relative flex items-center justify-center">
+            <Spade className="w-14 h-14 fill-white text-white" />
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black font-black text-sm mt-[-2px]">75</span>
+          </div>
+          <span className="text-[10px] font-black tracking-[0.2em] mt-1">HARD</span>
         </div>
-        <div className="text-right">
-          <div className="text-3xl font-black text-orange-500">{Math.round(percentComplete)}%</div>
-          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Journey</div>
+
+        <div className="text-center flex-1">
+          <h1 className="text-6xl font-black tracking-tighter uppercase leading-none mb-2">DAY {day}</h1>
+          <p className="text-zinc-500 text-sm font-medium">{format(today, 'MMM d, yyyy')}</p>
+        </div>
+
+        <div className="pt-2">
+          <Calendar className="w-8 h-8 text-white opacity-80" />
         </div>
       </header>
 
-      <Progress value={percentComplete} className="h-3 bg-slate-800" />
-
-      <div className="grid gap-4">
+      {/* Challenge List */}
+      <div className="divide-y divide-zinc-800/50">
         {challenges.map((challenge) => {
           const isDone = progress[challenge.id];
+          const isPhoto = challenge.text.toLowerCase().includes('photo') || challenge.text.toLowerCase().includes('picture');
+          
           return (
-            <button
+            <div
               key={challenge.id}
+              className="flex items-center gap-5 py-6 group cursor-pointer"
               onClick={() => onToggle(challenge.id)}
-              className={cn(
-                "flex items-center gap-4 p-5 rounded-[2rem] border-2 transition-all duration-300 text-left group",
-                isDone 
-                  ? "bg-orange-500/10 border-orange-500/50 text-white" 
-                  : "bg-slate-900/50 border-slate-800 text-slate-400 hover:border-slate-700"
-              )}
             >
-              <div className={cn(
-                "shrink-0 transition-transform duration-300 group-active:scale-90",
-                isDone ? "text-orange-500" : "text-slate-700"
-              )}>
-                {isDone ? <CheckCircle2 className="w-8 h-8" /> : <Circle className="w-8 h-8" />}
+              <div className="shrink-0">
+                {isDone ? (
+                  <div className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center bg-white">
+                    <CheckCircle2 className="w-6 h-6 text-black" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-full border-2 border-zinc-700 group-hover:border-zinc-500 transition-colors" />
+                )}
               </div>
-              <span className={cn(
-                "text-lg font-bold leading-tight",
-                isDone ? "text-white" : "text-slate-400"
-              )}>
-                {challenge.text}
-              </span>
-            </button>
+              
+              <div className="flex-1 space-y-1">
+                <h3 className={cn(
+                  "text-xl font-medium transition-all",
+                  isDone ? "text-zinc-500 line-through" : "text-white"
+                )}>
+                  {challenge.text}
+                </h3>
+                <div className="flex items-center gap-1.5 text-zinc-500 text-xs font-bold uppercase tracking-wider">
+                  <Clock className="w-3.5 h-3.5" />
+                  Add Reminder
+                </div>
+              </div>
+
+              {isPhoto && (
+                <div className="shrink-0 opacity-80">
+                  <Camera className="w-7 h-7" />
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
 
-      <div className="pt-4 space-y-4">
+      {/* Action Section */}
+      <div className="pt-8 space-y-6">
         {completedCount === totalCount ? (
           <Button 
             onClick={onCompleteDay}
-            className="w-full h-16 rounded-[2rem] bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xl shadow-xl shadow-emerald-900/20 animate-bounce"
+            className="w-full h-16 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-xl transition-all active:scale-[0.98]"
           >
             COMPLETE DAY {day}
             <Trophy className="ml-3 w-6 h-6" />
           </Button>
         ) : (
-          <div className="p-6 rounded-[2rem] bg-slate-900/50 border border-slate-800 text-center">
-            <p className="text-slate-500 font-medium">
-              Complete all {totalCount} tasks to finish the day.
+          <div className="text-center py-4">
+            <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">
+              {totalCount - completedCount} TASKS REMAINING
             </p>
           </div>
         )}
 
-        <Button 
-          variant="ghost"
+        <button 
           onClick={onFail}
-          className="w-full h-14 rounded-[2rem] text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 font-bold"
+          className="w-full py-4 text-zinc-600 hover:text-rose-500 text-xs font-black uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
         >
-          <XCircle className="mr-2 w-5 h-5" />
-          I FAILED TODAY (RESTART)
-        </Button>
+          <XCircle className="w-4 h-4" />
+          I Failed Today (Restart)
+        </button>
       </div>
     </div>
   );
