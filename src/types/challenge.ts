@@ -1,6 +1,7 @@
 export interface Challenge {
   id: string;
   text: string;
+  reminderTime?: string;
 }
 
 export interface DailyProgress {
@@ -8,11 +9,12 @@ export interface DailyProgress {
 }
 
 export interface ChallengeState {
-  status: 'setup' | 'confirming' | 'active';
+  status: 'setup' | 'confirming' | 'active' | 'success';
   challenges: Challenge[];
   currentDay: number;
   startDate: string | null;
   dailyProgress: DailyProgress;
-  history: Record<number, DailyProgress>;
-  photos: Record<number, string>; // Day number to base64 image string
+  history: Record<number, { progress: DailyProgress; notes: string }>;
+  photos: Record<number, string>;
+  notes: string;
 }

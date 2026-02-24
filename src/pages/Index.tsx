@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Setup from '@/components/75Hard/Setup';
 import Confirmation from '@/components/75Hard/Confirmation';
 import Dashboard from '@/components/75Hard/Dashboard';
-import { Challenge, ChallengeState, DailyProgress } from '@/types/challenge';
+import SuccessScreen from '@/components/75Hard/SuccessScreen';
+import { Challenge, ChallengeState } from '@/types/challenge';
 import { showSuccess, showError } from '@/utils/toast';
 import { MadeWithDyad } from "@/components/made-with-dyad";
 
-const STORAGE_KEY = '75hard_state_v2';
+const STORAGE_KEY = '75hard_state_v3';
 
 const Index = () => {
   const [state, setState] = useState<ChallengeState>(() => {
@@ -21,7 +22,8 @@ const Index = () => {
       startDate: null,
       dailyProgress: {},
       history: {},
-      photos: {}
+      photos: {},
+      notes: ''
     };
   });
 
@@ -46,10 +48,7 @@ const Index = () => {
   const handleToggleTask = (id: string) => {
     setState(prev => ({
       ...prev,
-      dailyProgress: {
-        ...prev.dailyProgress,
-        [id]: !prev.dailyProgress[id]
-      }
+      dailyProgress: { ...prev.dailyProgress, [id]: !prev.dailyProgress[id] }
     }));
   };
 
@@ -58,34 +57,36 @@ const Index = () => {
       const photoTask = prev.challenges.find(c => 
         c.text.toLowerCase().includes('photo') || c.text.toLowerCase().includes('picture')
       );
-      
       const newProgress = { ...prev.dailyProgress };
-      if (photoTask) {
-        newProgress[photoTask.id] = true;
-      }
-
+      if (photoTask) newProgress[photoTask.id] = true;
       return {
         ...prev,
         photos: { ...prev.photos, [day]: base64 },
         dailyProgress: newProgress
       };
     });
-    showSuccess("Photo captured!");
+  };
+
+  const handleUpdateReminder = (id: string, time: string) => {
+    setState(prev => ({
+      ...prev,
+      challenges: prev.challenges.map(c => c.id === id ? { ...c, reminderTime: time } : c)
+    }));
   };
 
   const handleCompleteDay = () => {
-    if (state.currentDay >= 75) {
-      showSuccess("CONGRATULATIONS! YOU FINISHED 75 HARD!");
-      return;
-    }
+    setState(prev => ({ ...prev, status: 'success' }));
+  };
 
+  const handleNextDay = () => {
     setState(prev => ({
       ...prev,
+      status: 'active',
       currentDay: prev.currentDay + 1,
-      history: { ...prev.history, [prev.currentDay]: prev.dailyProgress },
-      dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {})
+      history: { ...prev.history, [prev.currentDay]: { progress: prev.dailyProgress, notes: prev.notes } },
+      dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {}),
+      notes: ''
     }));
-    showSuccess(`Day ${state.currentDay} complete! Keep going.`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -95,44 +96,60 @@ const Index = () => {
       currentDay: 1,
       dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {}),
       history: {},
-      photos: {}
+      photos: {},
+      notes: ''
     }));
     showError("Challenge restarted. Day 1 starts again.");
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-50 selection:bg-orange-500/30">
-      <div className="max-w-xl mx-auto px-6 py-12 sm:py-20">
-        {state.status === 'setup' && (
+    <div className="min-h-screen bg-black text-white selection:bg-rose-500/30">
+      {state.status === 'setup' && (
+        <div className="max-w-xl mx-auto px-6 py-20">
           <Setup onComplete={handleSetupComplete} />
-        )}
+        </div>
+      )}
 
-        {state.status === 'confirming' && (
+      {state.status === 'confirming' && (
+        <div className="max-w-xl mx-auto px-6 py-20">
           <Confirmation 
             challenges={state.challenges} 
             onBack={() => setState(prev => ({ ...prev, status: 'setup' }))}
             onConfirm={handleConfirm}
           />
-        )}
+        </div>
+      )}
 
-        {state.status === 'active' && (
-          <Dashboard 
-            day={state.currentDay}
-            challenges={state.challenges}
-            progress={state.dailyProgress}
-            history={state.history}
-            photos={state.photos}
-            onToggle={handleToggleTask}
-            onFail={handleFail}
-            onCompleteDay={handleCompleteDay}
-            onPhotoUpload={handlePhotoUpload}
-          />
-        )}
+      {state.status === 'active' && (
+        <Dashboard 
+          day={state.currentDay}
+          challenges={state.challenges}
+          progress={state.dailyProgress}
+          history={state.history}
+          photos={state.photos}
+          notes={state.notes}
+          onToggle={handleToggleTask}
+          onFail={handleFail}
+          onCompleteDay={handleCompleteDay}
+          onPhotoUpload={handlePhotoUpload}
+          onUpdateNotes={(notes) => setState(prev => ({ ...prev, notes }))}
+          onUpdateReminder={handleUpdateReminder}
+        />
+      )}
 
-        <footer className="mt-20 opacity-50">
+      {state.status === 'success' && (
+        <SuccessScreen 
+          day={state.currentDay} 
+          history={state.history} 
+          onClose={handleNextDay} 
+        />
+      )}
+
+      {state.status !== 'success' && (
+        <footer className="pb-10 opacity-30">
           <MadeWithDyad />
         </footer>
-      </div>
+      )}
     </div>
   );
 };

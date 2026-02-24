@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useRef, useState } from 'react';
-import { CheckCircle2, Calendar, Clock, Camera, Spade, XCircle, Trophy } from 'lucide-react';
+import { CheckCircle2, Calendar, Clock, Camera, Spade, XCircle, Trophy, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Challenge, DailyProgress } from '@/types/challenge';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -15,85 +14,70 @@ import {
 } from "@/components/ui/dialog";
 import ProgressCalendar from './ProgressCalendar';
 import FailureDialog from './FailureDialog';
+import ReminderModal from './ReminderModal';
 
 interface DashboardProps {
   day: number;
   challenges: Challenge[];
   progress: DailyProgress;
-  history: Record<number, DailyProgress>;
+  history: Record<number, any>;
   photos: Record<number, string>;
+  notes: string;
   onToggle: (id: string) => void;
   onFail: () => void;
   onCompleteDay: () => void;
   onPhotoUpload: (day: number, base64: string) => void;
+  onUpdateNotes: (notes: string) => void;
+  onUpdateReminder: (id: string, time: string) => void;
 }
 
-const Dashboard = ({ day, challenges, progress, history, photos, onToggle, onFail, onCompleteDay, onPhotoUpload }: DashboardProps) => {
+const Dashboard = ({ 
+  day, challenges, progress, history, photos, notes, 
+  onToggle, onFail, onCompleteDay, onPhotoUpload, onUpdateNotes, onUpdateReminder 
+}: DashboardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
+  const [reminderTask, setReminderTask] = useState<{ id: string, name: string } | null>(null);
+  
   const completedCount = Object.values(progress).filter(Boolean).length;
   const totalCount = challenges.length;
-  const today = new Date();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        onPhotoUpload(day, reader.result as string);
-      };
+      reader.onloadend = () => onPhotoUpload(day, reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 max-w-md mx-auto">
-      <input 
-        type="file" 
-        ref={fileInputRef} 
-        className="hidden" 
-        accept="image/*" 
-        onChange={handleFileChange}
-      />
+    <div className="space-y-0 animate-in fade-in duration-700 max-w-md mx-auto bg-black min-h-screen pb-20">
+      <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
-      {/* Header Section */}
-      <header className="flex items-start justify-between pt-4">
+      {/* Header */}
+      <header className="flex items-center justify-between p-6 pt-12">
         <div className="flex flex-col items-center">
-          <div className="relative flex items-center justify-center">
-            <Spade className="w-14 h-14 fill-white text-white" />
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black font-black text-sm mt-[-2px]">75</span>
-          </div>
-          <span className="text-[10px] font-black tracking-[0.2em] mt-1">HARD</span>
+          <Spade className="w-12 h-12 fill-white text-white" />
+          <span className="text-[8px] font-black tracking-widest mt-1">HARD</span>
         </div>
 
-        <div className="text-center flex-1">
-          <h1 className="text-6xl font-black tracking-tighter uppercase leading-none mb-2">DAY {day}</h1>
-          <p className="text-zinc-500 text-sm font-medium">{format(today, 'MMM d, yyyy')}</p>
-        </div>
+        <h1 className="text-6xl font-impact text-rose-600 leading-none">DAY {day}</h1>
 
-        <div className="pt-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="hover:opacity-70 transition-opacity">
-                <Calendar className="w-8 h-8 text-white opacity-80" />
-              </button>
-            </DialogTrigger>
-            <DialogContent className="bg-black border-zinc-800 text-white max-w-[90vw] sm:max-w-md rounded-3xl">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-black tracking-tighter uppercase text-center mb-4">
-                  Progress Calendar
-                </DialogTitle>
-              </DialogHeader>
-              <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-                <ProgressCalendar currentDay={day} history={history} photos={photos} />
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="p-2 bg-zinc-900 rounded-lg border border-zinc-800">
+              <Calendar className="w-6 h-6 text-white/80" />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="bg-black border-zinc-800 text-white max-w-[95vw] sm:max-w-md rounded-3xl p-6 overflow-y-auto max-h-[90vh] custom-scrollbar">
+            <ProgressCalendar currentDay={day} history={history} photos={photos} />
+          </DialogContent>
+        </Dialog>
       </header>
 
-      {/* Challenge List */}
-      <div className="divide-y divide-zinc-800/50">
+      {/* Task List */}
+      <div className="px-6 space-y-0 border-t border-zinc-900">
         {challenges.map((challenge) => {
           const isDone = progress[challenge.id];
           const isPhotoTask = challenge.text.toLowerCase().includes('photo') || challenge.text.toLowerCase().includes('picture');
@@ -102,50 +86,47 @@ const Dashboard = ({ day, challenges, progress, history, photos, onToggle, onFai
           return (
             <div
               key={challenge.id}
-              className="flex items-center gap-5 py-6 group cursor-pointer"
-              onClick={() => {
-                if (isPhotoTask && !hasPhoto) {
-                  fileInputRef.current?.click();
-                } else {
-                  onToggle(challenge.id);
-                }
-              }}
+              className="flex items-center gap-4 py-5 border-b border-zinc-900 group"
             >
-              <div className="shrink-0">
+              <button 
+                onClick={() => {
+                  if (isPhotoTask && !hasPhoto) fileInputRef.current?.click();
+                  else onToggle(challenge.id);
+                }}
+                className="shrink-0"
+              >
                 {isDone ? (
-                  <div className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center bg-white">
-                    <CheckCircle2 className="w-6 h-6 text-black" />
+                  <div className="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  </div>
+                ) : isPhotoTask ? (
+                  <div className="w-8 h-8 rounded-lg border-2 border-zinc-800 flex items-center justify-center text-zinc-600">
+                    <Camera className="w-5 h-5" />
                   </div>
                 ) : (
-                  <div className="w-10 h-10 rounded-full border-2 border-zinc-700 group-hover:border-zinc-500 transition-colors" />
+                  <div className="w-8 h-8 rounded-full border-2 border-zinc-800 group-hover:border-zinc-600 transition-colors" />
                 )}
-              </div>
+              </button>
               
-              <div className="flex-1 space-y-1">
+              <div className="flex-1 min-w-0">
                 <h3 className={cn(
-                  "text-xl font-medium transition-all",
-                  isDone ? "text-zinc-500 line-through" : "text-white"
+                  "text-lg font-bold transition-all truncate",
+                  isDone ? "text-zinc-600 line-through" : "text-zinc-200"
                 )}>
                   {challenge.text}
                 </h3>
-                <div className="flex items-center gap-1.5 text-zinc-500 text-xs font-bold uppercase tracking-wider">
-                  <Clock className="w-3.5 h-3.5" />
-                  {isPhotoTask && hasPhoto ? "Photo Captured" : "Add Reminder"}
-                </div>
+                <button 
+                  onClick={() => setReminderTask({ id: challenge.id, name: challenge.text })}
+                  className="flex items-center gap-1.5 text-zinc-600 text-[10px] font-bold uppercase tracking-wider hover:text-zinc-400"
+                >
+                  <Clock className="w-3 h-3" />
+                  {challenge.reminderTime || "Add reminder"}
+                </button>
               </div>
 
-              {isPhotoTask && (
-                <div className={cn(
-                  "shrink-0 transition-all",
-                  hasPhoto ? "text-orange-500" : "opacity-80"
-                )}>
-                  {hasPhoto ? (
-                    <div className="w-10 h-10 rounded-lg overflow-hidden border border-zinc-700">
-                      <img src={photos[day]} alt="Today's progress" className="w-full h-full object-cover" />
-                    </div>
-                  ) : (
-                    <Camera className="w-7 h-7" />
-                  )}
+              {isPhotoTask && hasPhoto && (
+                <div className="w-10 h-10 rounded-lg overflow-hidden border border-zinc-800">
+                  <img src={photos[day]} alt="Progress" className="w-full h-full object-cover" />
                 </div>
               )}
             </div>
@@ -153,32 +134,42 @@ const Dashboard = ({ day, challenges, progress, history, photos, onToggle, onFai
         })}
       </div>
 
-      {/* Action Section */}
-      <div className="pt-8 space-y-6">
-        {completedCount === totalCount ? (
+      {/* Notes Section */}
+      <div className="mt-8 bg-white text-black p-6 space-y-4">
+        <h2 className="text-xl font-impact tracking-tight">NOTES:</h2>
+        <textarea
+          value={notes}
+          onChange={(e) => onUpdateNotes(e.target.value)}
+          placeholder="Make notes of any challenges, insights, or breakthroughs you achieve."
+          className="w-full min-h-[120px] bg-transparent border-none focus:ring-0 p-0 text-sm font-medium leading-relaxed placeholder:text-zinc-400 resize-none"
+        />
+      </div>
+
+      {/* Footer Actions */}
+      <div className="p-6 space-y-4">
+        {completedCount === totalCount && (
           <Button 
             onClick={onCompleteDay}
-            className="w-full h-16 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-xl transition-all active:scale-[0.98]"
+            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-xl rounded-xl transition-all active:scale-[0.98]"
           >
             COMPLETE DAY {day}
-            <Trophy className="ml-3 w-6 h-6" />
           </Button>
-        ) : (
-          <div className="text-center py-4">
-            <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest">
-              {totalCount - completedCount} TASKS REMAINING
-            </p>
-          </div>
         )}
 
         <button 
           onClick={() => setIsFailureModalOpen(true)}
-          className="w-full py-4 text-zinc-600 hover:text-rose-500 text-xs font-black uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
+          className="w-full py-4 text-zinc-700 hover:text-rose-900 text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
         >
-          <XCircle className="w-4 h-4" />
           I Failed Today (Restart)
         </button>
       </div>
+
+      <ReminderModal 
+        isOpen={reminderTask !== null}
+        onClose={() => setReminderTask(null)}
+        taskName={reminderTask?.name || ""}
+        onSave={(time) => reminderTask && onUpdateReminder(reminderTask.id, time)}
+      />
 
       <FailureDialog 
         isOpen={isFailureModalOpen} 
