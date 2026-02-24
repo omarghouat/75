@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Camera, ChevronLeft, Edit3 } from 'lucide-react';
+import { Camera, ChevronLeft, Edit3, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
