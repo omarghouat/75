@@ -10,7 +10,7 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 100%;
-    --primary: 0 100% 50%; /* Bright Red */
+    --primary: 0 100% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
@@ -33,15 +33,22 @@
   }
   body {
     @apply bg-black text-white antialiased;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
+/* High-impact condensed typography for headings */
 .font-impact {
-  font-family: 'Inter Tight', sans-serif;
+  font-family: 'Inter Tight', 'Arial Narrow', sans-serif;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+}
+
+/* Wide tracking for labels and buttons */
+.tracking-widest-custom {
+  letter-spacing: 0.25em;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

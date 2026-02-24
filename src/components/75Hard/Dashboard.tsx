@@ -59,10 +59,10 @@ const Dashboard = ({
       <header className="flex items-center justify-between p-6 pt-12">
         <div className="flex flex-col items-center">
           <Spade className="w-12 h-12 fill-white text-white" />
-          <span className="text-[8px] font-black tracking-widest mt-1">HARD</span>
+          <span className="text-[8px] font-black tracking-widest-custom mt-1">HARD</span>
         </div>
 
-        <h1 className="text-6xl font-impact text-rose-600 leading-none">DAY {day}</h1>
+        <h1 className="text-7xl font-impact text-rose-600">DAY {day}</h1>
 
         <Dialog>
           <DialogTrigger asChild>
@@ -117,7 +117,7 @@ const Dashboard = ({
                 </h3>
                 <button 
                   onClick={() => setReminderTask({ id: challenge.id, name: challenge.text })}
-                  className="flex items-center gap-1.5 text-zinc-600 text-[10px] font-bold uppercase tracking-wider hover:text-zinc-400"
+                  className="flex items-center gap-1.5 text-zinc-600 text-[10px] font-black uppercase tracking-widest-custom hover:text-zinc-400"
                 >
                   <Clock className="w-3 h-3" />
                   {challenge.reminderTime || "Add reminder"}
@@ -136,12 +136,12 @@ const Dashboard = ({
 
       {/* Notes Section */}
       <div className="mt-8 bg-white text-black p-6 space-y-4">
-        <h2 className="text-xl font-impact tracking-tight">NOTES:</h2>
+        <h2 className="text-2xl font-impact tracking-tight">NOTES:</h2>
         <textarea
           value={notes}
           onChange={(e) => onUpdateNotes(e.target.value)}
           placeholder="Make notes of any challenges, insights, or breakthroughs you achieve."
-          className="w-full min-h-[120px] bg-transparent border-none focus:ring-0 p-0 text-sm font-medium leading-relaxed placeholder:text-zinc-400 resize-none"
+          className="w-full min-h-[120px] bg-transparent border-none focus:ring-0 p-0 text-base font-medium leading-relaxed placeholder:text-zinc-400 resize-none"
         />
       </div>
 
@@ -150,7 +150,7 @@ const Dashboard = ({
         {completedCount === totalCount && (
           <Button 
             onClick={onCompleteDay}
-            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-xl rounded-xl transition-all active:scale-[0.98]"
+            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-xl rounded-xl transition-all active:scale-[0.98] uppercase tracking-widest-custom"
           >
             COMPLETE DAY {day}
           </Button>
@@ -158,7 +158,7 @@ const Dashboard = ({
 
         <button 
           onClick={() => setIsFailureModalOpen(true)}
-          className="w-full py-4 text-zinc-700 hover:text-rose-900 text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
+          className="w-full py-4 text-zinc-700 hover:text-rose-900 text-[10px] font-black uppercase tracking-widest-custom transition-colors"
         >
           I Failed Today (Restart)
         </button>

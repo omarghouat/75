@@ -29,11 +29,11 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
         <div className="relative">
           <div className="flex flex-col items-center mb-2">
             <Spade className="w-10 h-10 fill-white text-white" />
-            <span className="text-[8px] font-black tracking-widest">HARD</span>
+            <span className="text-[8px] font-black tracking-widest-custom">HARD</span>
           </div>
-          <h1 className="text-7xl font-impact text-white leading-none">DAY {day}</h1>
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 rotate-[-12deg] border-4 border-rose-600 px-4 py-1 rounded-lg">
-            <span className="text-rose-600 font-black text-2xl tracking-tighter uppercase">COMPLETED</span>
+          <h1 className="text-8xl font-impact text-white">DAY {day}</h1>
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 rotate-[-12deg] border-4 border-rose-600 px-6 py-2 rounded-lg bg-black/50 backdrop-blur-sm">
+            <span className="text-rose-600 font-black text-3xl tracking-tighter uppercase">COMPLETED</span>
           </div>
         </div>
 
@@ -51,7 +51,7 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-[10px] font-bold uppercase tracking-tight text-zinc-400 w-full max-w-xs">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-[10px] font-bold uppercase tracking-widest-custom text-zinc-400 w-full max-w-xs">
           <div className="flex items-center gap-2">Two 45 min workouts</div>
           <div className="flex items-center gap-2">One workout must be outdoors</div>
           <div className="flex items-center gap-2">Follow a diet</div>
@@ -61,11 +61,11 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
           <div className="flex items-center gap-2">Read 10 pages</div>
         </div>
 
-        <div className="text-zinc-600 font-black tracking-widest text-sm">75HARD.COM</div>
+        <div className="text-zinc-600 font-black tracking-widest-custom text-sm">75HARD.COM</div>
       </div>
 
       <div className="p-8 bg-zinc-100">
-        <Button className="w-full h-16 bg-black hover:bg-zinc-900 text-white rounded-none flex items-center justify-center gap-3 font-bold text-lg">
+        <Button className="w-full h-16 bg-black hover:bg-zinc-900 text-white rounded-none flex items-center justify-center gap-3 font-bold text-lg uppercase tracking-widest-custom">
           <Instagram className="w-6 h-6" />
           Create IG Story Post
         </Button>
