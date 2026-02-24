@@ -3,21 +3,29 @@
 import React from 'react';
 import { CheckCircle2, Circle, Calendar, Clock, Camera, Spade, XCircle, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Challenge, DailyProgress } from '@/types/challenge';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ProgressCalendar from './ProgressCalendar';
 
 interface DashboardProps {
   day: number;
   challenges: Challenge[];
   progress: DailyProgress;
+  history: Record<number, DailyProgress>;
   onToggle: (id: string) => void;
   onFail: () => void;
   onCompleteDay: () => void;
 }
 
-const Dashboard = ({ day, challenges, progress, onToggle, onFail, onCompleteDay }: DashboardProps) => {
+const Dashboard = ({ day, challenges, progress, history, onToggle, onFail, onCompleteDay }: DashboardProps) => {
   const completedCount = Object.values(progress).filter(Boolean).length;
   const totalCount = challenges.length;
   const today = new Date();
@@ -40,7 +48,23 @@ const Dashboard = ({ day, challenges, progress, onToggle, onFail, onCompleteDay 
         </div>
 
         <div className="pt-2">
-          <Calendar className="w-8 h-8 text-white opacity-80" />
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="hover:opacity-70 transition-opacity">
+                <Calendar className="w-8 h-8 text-white opacity-80" />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="bg-black border-zinc-800 text-white max-w-[90vw] sm:max-w-md rounded-3xl">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-black tracking-tighter uppercase text-center mb-4">
+                  Progress Calendar
+                </DialogTitle>
+              </DialogHeader>
+              <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                <ProgressCalendar currentDay={day} history={history} />
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </header>
 

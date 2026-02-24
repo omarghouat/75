@@ -102,6 +102,7 @@ const Index = () => {
             day={state.currentDay}
             challenges={state.challenges}
             progress={state.dailyProgress}
+            history={state.history}
             onToggle={handleToggleTask}
             onFail={handleFail}
             onCompleteDay={handleCompleteDay}
