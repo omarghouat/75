@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import { Camera, ChevronLeft, Edit3, X, User, Clock, Upload } from 'lucide-react';
+import { Camera, ChevronLeft, Edit3, X, User, Clock, Upload, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { showSuccess } from '@/utils/toast';
+import { showSuccess, showError } from '@/utils/toast';
 import { ChallengeState } from '@/types/challenge';
 
 interface ProgressCalendarProps {
@@ -18,14 +18,16 @@ interface ProgressCalendarProps {
   photos: Record<number, string>;
   profile: ChallengeState['profile'];
   onUpdateProfile: (profile: Partial<ChallengeState['profile']>) => void;
+  onUpdatePhoto: (day: number, base64: string) => void;
 }
 
-const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfile }: ProgressCalendarProps) => {
+const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfile, onUpdatePhoto }: ProgressCalendarProps) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [tempName, setTempName] = useState(profile.name);
   const [tempEndTime, setTempEndTime] = useState(profile.dayEndTime);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const replacePhotoInputRef = useRef<HTMLInputElement>(null);
   
   const days = Array.from({ length: 75 }, (_, i) => i + 1);
 
@@ -47,6 +49,37 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
         showSuccess("Profile picture updated");
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleReplacePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && selectedDay) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onUpdatePhoto(selectedDay, reader.result as string);
+        showSuccess(`Photo for Day ${selectedDay} updated`);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!selectedDay || !photos[selectedDay]) return;
+    
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `75 HARD - Day ${selectedDay}`,
+          text: `Check out my progress on Day ${selectedDay} of the 75 Hard challenge!`,
+          url: window.location.href
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess("Link copied to clipboard!");
+      }
+    } catch (err) {
+      // Ignore share cancellation
     }
   };
 
@@ -205,8 +238,23 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
             <img src={photos[selectedDay || 0]} className="w-full h-full object-cover" alt="Progress" />
             <div className="absolute inset-0 p-8 flex flex-col justify-between bg-gradient-to-b from-black/40 via-transparent to-black/80">
               <div className="flex justify-between items-start">
-                <button onClick={() => setSelectedDay(null)}><X className="w-8 h-8" /></button>
-                <button className="text-sm font-bold uppercase">Share or Edit ></button>
+                <button onClick={() => setSelectedDay(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                  <X className="w-8 h-8" />
+                </button>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={handleShare}
+                    className="text-sm font-bold uppercase flex items-center gap-2 hover:text-rose-500 transition-colors"
+                  >
+                    Share <Share2 className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => replacePhotoInputRef.current?.click()}
+                    className="text-sm font-bold uppercase flex items-center gap-2 hover:text-rose-500 transition-colors"
+                  >
+                    Edit <Edit3 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               <div>
                 <h2 className="text-5xl font-impact mb-4">DAY {selectedDay}</h2>
@@ -216,6 +264,13 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
               </div>
             </div>
           </div>
+          <input 
+            type="file" 
+            ref={replacePhotoInputRef} 
+            className="hidden" 
+            accept="image/*" 
+            onChange={handleReplacePhoto} 
+          />
         </DialogContent>
       </Dialog>
     </div>

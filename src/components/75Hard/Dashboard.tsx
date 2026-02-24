@@ -79,6 +79,7 @@ const Dashboard = ({
               photos={photos} 
               profile={profile}
               onUpdateProfile={onUpdateProfile}
+              onUpdatePhoto={onPhotoUpload}
             />
           </DialogContent>
         </Dialog>
