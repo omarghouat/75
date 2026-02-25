@@ -104,6 +104,19 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleRestartWithChanges = () => {
+    setState(prev => ({
+      ...prev,
+      status: 'setup',
+      currentDay: 1,
+      dailyProgress: prev.challenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {}),
+      history: {},
+      photos: {},
+      notes: ''
+    }));
+    showError("Challenge restarted. Make your changes.");
+  };
+
   const handleFail = () => {
     setState(prev => ({
       ...prev,
@@ -119,7 +132,7 @@ const Index = () => {
   return (
     <div className={cn(
       "bg-black text-white selection:bg-rose-500/30",
-      state.status === 'active' || state.status === 'success' ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh] mobile-scroll pb-10 flex flex-col"
+      "w-full min-h-screen pb-10 flex flex-col mobile-scroll relative"
     )}>
       {state.status === 'setup' && (
         <div className="flex-1 max-w-xl mx-auto px-6 py-20 w-full">
@@ -148,6 +161,7 @@ const Index = () => {
           profile={state.profile}
           onToggle={handleToggleTask}
           onFail={handleFail}
+          onRestartWithChanges={handleRestartWithChanges}
           onCompleteDay={handleCompleteDay}
           onPhotoUpload={handlePhotoUpload}
           onUpdateNotes={(notes) => setState(prev => ({ ...prev, notes }))}

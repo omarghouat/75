@@ -55,11 +55,11 @@ const Dashboard = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-black text-white selection:bg-rose-500/30 no-pull-to-refresh animate-in fade-in duration-700">
+    <div className="flex flex-col min-h-screen w-full bg-black text-white selection:bg-rose-500/30 animate-in fade-in duration-700">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
-      {/* Header - Sticky for mobile */}
-      <header className="sticky-header shrink-0 z-30 bg-black/80 backdrop-blur-md border-b border-zinc-900 px-6 py-4 pt-safe flex items-center justify-between">
+      {/* Header - Fixed for mobile */}
+      <header className="fixed top-0 left-0 right-0 z-30 bg-black/80 backdrop-blur-md border-b border-zinc-900 px-6 py-4 pt-safe flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src="/logo-75.png" alt="75 Hard Logo" className="w-12 h-12 object-contain" />
           <h1 className="text-4xl font-impact text-rose-600">DAY {day}</h1>
@@ -85,7 +85,7 @@ const Dashboard = ({
       </header>
 
       {/* Task List */}
-      <main className="flex-1 px-6 py-4 space-y-1 overflow-y-auto custom-scrollbar mobile-scroll pb-[120px]">
+      <main className="flex-1 w-full max-w-xl mx-auto px-6 pt-[100px] pb-[160px] space-y-1">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Daily Tasks</span>
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-rose-500">{completedCount}/{totalCount} Done</span>
@@ -163,8 +163,8 @@ const Dashboard = ({
       </main>
 
       {/* Footer Actions - Fixed at bottom for mobile */}
-      <footer className="absolute bottom-0 left-0 right-0 p-6 pb-safe space-y-3 bg-gradient-to-t from-black via-black to-transparent z-20 pointer-events-none">
-        <div className="pointer-events-auto flex flex-col items-center w-full">
+      <footer className="fixed bottom-0 left-0 right-0 p-6 pb-safe space-y-3 bg-gradient-to-t from-black via-black to-transparent z-20 pointer-events-none">
+        <div className="pointer-events-auto flex flex-col items-center w-full max-w-xl mx-auto">
           {completedCount === totalCount && (
             <Button
               onClick={onCompleteDay}
