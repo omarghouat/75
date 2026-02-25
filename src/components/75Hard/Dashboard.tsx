@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from 'react';
-import { CheckCircle2, Calendar, Clock, Camera, Spade, XCircle, Trophy, Bell } from 'lucide-react';
+import { CheckCircle2, Calendar, Clock, Camera, XCircle, Trophy, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Challenge, DailyProgress, ChallengeState } from '@/types/challenge';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ interface DashboardProps {
   profile: ChallengeState['profile'];
   onToggle: (id: string) => void;
   onFail: () => void;
-  onRestartWithChanges: () => void; // Ensure this is implemented
+  onRestartWithChanges: () => void;
   onCompleteDay: () => void;
   onPhotoUpload: (day: number, base64: string) => void;
   onUpdateNotes: (notes: string) => void;
@@ -61,10 +61,7 @@ const Dashboard = ({
       {/* Header - Sticky for mobile */}
       <header className="sticky-header px-6 py-4 pt-safe flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex flex-col items-center">
-            <Spade className="w-8 h-8 fill-white text-white" />
-            <span className="text-[6px] font-black tracking-widest-custom">HARD</span>
-          </div>
+          <img src="/logo-75.png" alt="75 Hard Logo" className="w-12 h-12 object-contain" />
           <h1 className="text-4xl font-impact text-rose-600">DAY {day}</h1>
         </div>
 
@@ -195,7 +192,7 @@ const Dashboard = ({
         isOpen={isFailureModalOpen} 
         onClose={() => setIsFailureModalOpen(false)} 
         onConfirmReset={onFail} 
-        onRestartWithChanges={onRestartWithChanges} // Pass the function
+        onRestartWithChanges={onRestartWithChanges}
       />
     </div>
   );

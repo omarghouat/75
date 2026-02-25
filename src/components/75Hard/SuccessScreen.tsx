@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { X, Download, Instagram, Spade } from 'lucide-react';
+import { X, Download, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -28,8 +28,7 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
       <div className="flex-1 flex flex-col items-center justify-center px-8 space-y-8">
         <div className="relative">
           <div className="flex flex-col items-center mb-2">
-            <Spade className="w-10 h-10 fill-white text-white" />
-            <span className="text-[8px] font-black tracking-widest-custom">HARD</span>
+            <img src="/logo-75.png" alt="75 Hard Logo" className="w-24 h-24 object-contain" />
           </div>
           <h1 className="text-8xl font-impact text-white">DAY {day}</h1>
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 rotate-[-12deg] border-4 border-rose-600 px-6 py-2 rounded-lg bg-black/50 backdrop-blur-sm">

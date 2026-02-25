@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Plus, Trash2, ArrowRight, Spade, Info } from 'lucide-react';
+import { Plus, Trash2, ArrowRight, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Challenge } from '@/types/challenge';
@@ -42,8 +42,7 @@ const Setup = ({ onComplete }: SetupProps) => {
       <div className="text-center space-y-4">
         <div className="flex flex-col items-center">
           <div className="relative flex items-center justify-center">
-            <Spade className="w-20 h-20 fill-white text-white" />
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black font-black text-2xl mt-[-2px]">75</span>
+            <img src="/logo-75.png" alt="75 Hard Logo" className="w-32 h-32 object-contain" />
           </div>
           <span className="text-[10px] font-black tracking-[0.4em] mt-2 text-zinc-500">HARD PROGRAM</span>
         </div>
