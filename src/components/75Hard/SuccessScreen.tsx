@@ -16,7 +16,7 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col animate-in fade-in duration-500">
-      <header className="flex justify-between items-center p-6">
+      <header className="shrink-0 flex justify-between items-center p-6 bg-black z-10 sticky top-0">
         <button onClick={onClose} className="text-white/60 hover:text-white">
           <X className="w-8 h-8" />
         </button>
@@ -25,7 +25,7 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
         </button>
       </header>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-8 space-y-8">
+      <div className="flex-1 flex flex-col items-center justify-center px-8 py-4 space-y-8 mobile-scroll pb-20">
         <div className="relative">
           <div className="flex flex-col items-center mb-2">
             <img src="/logo-75.png" alt="75 Hard Logo" className="w-24 h-24 object-contain" />
@@ -38,8 +38,8 @@ const SuccessScreen = ({ day, history, onClose }: SuccessScreenProps) => {
 
         <div className="grid grid-cols-7 gap-x-4 gap-y-2 w-full max-w-xs">
           {days.map((d) => (
-            <span 
-              key={d} 
+            <span
+              key={d}
               className={cn(
                 "text-center text-sm font-bold",
                 d <= day ? "text-rose-600" : "text-zinc-800"

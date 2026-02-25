@@ -8,6 +8,7 @@ import SuccessScreen from '@/components/75Hard/SuccessScreen';
 import { Challenge, ChallengeState } from '@/types/challenge';
 import { showSuccess, showError } from '@/utils/toast';
 import { MadeWithDyad } from "@/components/made-with-dyad";
+import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = '75hard_state_v4';
 
@@ -41,10 +42,10 @@ const Index = () => {
   };
 
   const handleConfirm = (reorderedChallenges: Challenge[]) => {
-    setState(prev => ({ 
-      ...prev, 
+    setState(prev => ({
+      ...prev,
       challenges: reorderedChallenges,
-      status: 'active', 
+      status: 'active',
       startDate: new Date().toISOString(),
       dailyProgress: reorderedChallenges.reduce((acc, c) => ({ ...acc, [c.id]: false }), {})
     }));
@@ -60,7 +61,7 @@ const Index = () => {
 
   const handlePhotoUpload = (day: number, base64: string) => {
     setState(prev => {
-      const photoTask = prev.challenges.find(c => 
+      const photoTask = prev.challenges.find(c =>
         c.text.toLowerCase().includes('photo') || c.text.toLowerCase().includes('picture')
       );
       const newProgress = { ...prev.dailyProgress };
@@ -116,17 +117,20 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-rose-500/30">
+    <div className={cn(
+      "bg-black text-white selection:bg-rose-500/30",
+      state.status === 'active' || state.status === 'success' ? "h-[100dvh] overflow-hidden" : "min-h-[100dvh] mobile-scroll pb-10 flex flex-col"
+    )}>
       {state.status === 'setup' && (
-        <div className="max-w-xl mx-auto px-6 py-20">
+        <div className="flex-1 max-w-xl mx-auto px-6 py-20 w-full">
           <Setup onComplete={handleSetupComplete} />
         </div>
       )}
 
       {state.status === 'confirming' && (
-        <div className="max-w-xl mx-auto px-6 py-20">
-          <Confirmation 
-            challenges={state.challenges} 
+        <div className="flex-1 max-w-xl mx-auto px-6 py-20 w-full">
+          <Confirmation
+            challenges={state.challenges}
             onBack={() => setState(prev => ({ ...prev, status: 'setup' }))}
             onConfirm={handleConfirm}
           />
@@ -134,7 +138,7 @@ const Index = () => {
       )}
 
       {state.status === 'active' && (
-        <Dashboard 
+        <Dashboard
           day={state.currentDay}
           challenges={state.challenges}
           progress={state.dailyProgress}
@@ -153,10 +157,10 @@ const Index = () => {
       )}
 
       {state.status === 'success' && (
-        <SuccessScreen 
-          day={state.currentDay} 
-          history={state.history} 
-          onClose={handleNextDay} 
+        <SuccessScreen
+          day={state.currentDay}
+          history={state.history}
+          onClose={handleNextDay}
         />
       )}
 

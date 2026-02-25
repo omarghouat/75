@@ -34,14 +34,14 @@ interface DashboardProps {
   onUpdateProfile: (profile: Partial<ChallengeState['profile']>) => void;
 }
 
-const Dashboard = ({ 
+const Dashboard = ({
   day, challenges, progress, history, photos, notes, profile,
   onToggle, onFail, onRestartWithChanges, onCompleteDay, onPhotoUpload, onUpdateNotes, onUpdateReminder, onUpdateProfile
 }: DashboardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
   const [reminderTask, setReminderTask] = useState<{ id: string, name: string } | null>(null);
-  
+
   const completedCount = Object.values(progress).filter(Boolean).length;
   const totalCount = challenges.length;
 
@@ -55,11 +55,11 @@ const Dashboard = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white selection:bg-rose-500/30 no-pull-to-refresh">
+    <div className="flex flex-col h-full bg-black text-white selection:bg-rose-500/30 no-pull-to-refresh animate-in fade-in duration-700">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
       {/* Header - Sticky for mobile */}
-      <header className="sticky-header px-6 py-4 pt-safe flex items-center justify-between">
+      <header className="sticky-header shrink-0 z-30 bg-black/80 backdrop-blur-md border-b border-zinc-900 px-6 py-4 pt-safe flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src="/logo-75.png" alt="75 Hard Logo" className="w-12 h-12 object-contain" />
           <h1 className="text-4xl font-impact text-rose-600">DAY {day}</h1>
@@ -71,11 +71,11 @@ const Dashboard = ({
               <Calendar className="w-6 h-6 text-white" />
             </button>
           </DialogTrigger>
-          <DialogContent className="bg-black border-zinc-800 text-white w-[92vw] max-w-md rounded-[2.5rem] p-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
-            <ProgressCalendar 
-              currentDay={day} 
-              history={history} 
-              photos={photos} 
+          <DialogContent className="bg-black border-zinc-800 text-white w-[92vw] max-w-md rounded-[2.5rem] p-6 overflow-y-auto max-h-[85vh] custom-scrollbar mobile-scroll">
+            <ProgressCalendar
+              currentDay={day}
+              history={history}
+              photos={photos}
               profile={profile}
               onUpdateProfile={onUpdateProfile}
               onUpdatePhoto={onPhotoUpload}
@@ -85,17 +85,17 @@ const Dashboard = ({
       </header>
 
       {/* Task List */}
-      <main className="flex-1 px-6 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+      <main className="flex-1 px-6 py-4 space-y-1 overflow-y-auto custom-scrollbar mobile-scroll pb-[120px]">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Daily Tasks</span>
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-rose-500">{completedCount}/{totalCount} Done</span>
         </div>
-        
+
         {challenges.map((challenge) => {
           const isDone = progress[challenge.id];
           const isPhotoTask = challenge.text.toLowerCase().includes('photo') || challenge.text.toLowerCase().includes('picture');
           const hasPhoto = photos[day] !== undefined;
-          
+
           return (
             <div
               key={challenge.id}
@@ -121,7 +121,7 @@ const Dashboard = ({
                   <div className="w-10 h-10 rounded-full border-2 border-zinc-700" />
                 )}
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <h3 className={cn(
                   "text-base font-bold transition-all truncate",
@@ -129,7 +129,7 @@ const Dashboard = ({
                 )}>
                   {challenge.text}
                 </h3>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setReminderTask({ id: challenge.id, name: challenge.text });
@@ -163,35 +163,37 @@ const Dashboard = ({
       </main>
 
       {/* Footer Actions - Fixed at bottom for mobile */}
-      <footer className="p-6 pb-safe space-y-3 bg-gradient-to-t from-black via-black to-transparent">
-        {completedCount === totalCount && (
-          <Button 
-            onClick={onCompleteDay}
-            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-lg rounded-2xl transition-all active:scale-[0.97] uppercase tracking-widest-custom shadow-2xl shadow-rose-900/40"
-          >
-            COMPLETE DAY {day}
-          </Button>
-        )}
+      <footer className="absolute bottom-0 left-0 right-0 p-6 pb-safe space-y-3 bg-gradient-to-t from-black via-black to-transparent z-20 pointer-events-none">
+        <div className="pointer-events-auto flex flex-col items-center w-full">
+          {completedCount === totalCount && (
+            <Button
+              onClick={onCompleteDay}
+              className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-lg rounded-2xl transition-all active:scale-[0.97] uppercase tracking-widest-custom shadow-2xl shadow-rose-900/40"
+            >
+              COMPLETE DAY {day}
+            </Button>
+          )}
 
-        <button 
-          onClick={() => setIsFailureModalOpen(true)}
-          className="w-full py-3 text-zinc-600 hover:text-rose-500 text-[10px] font-black uppercase tracking-widest-custom transition-colors"
-        >
-          I Failed Today (Restart)
-        </button>
+          <button
+            onClick={() => setIsFailureModalOpen(true)}
+            className="w-full py-3 text-zinc-600 hover:text-rose-500 text-[10px] font-black uppercase tracking-widest-custom transition-colors"
+          >
+            I Failed Today (Restart)
+          </button>
+        </div>
       </footer>
 
-      <ReminderModal 
+      <ReminderModal
         isOpen={reminderTask !== null}
         onClose={() => setReminderTask(null)}
         taskName={reminderTask?.name || ""}
         onSave={(time) => reminderTask && onUpdateReminder(reminderTask.id, time)}
       />
 
-      <FailureDialog 
-        isOpen={isFailureModalOpen} 
-        onClose={() => setIsFailureModalOpen(false)} 
-        onConfirmReset={onFail} 
+      <FailureDialog
+        isOpen={isFailureModalOpen}
+        onClose={() => setIsFailureModalOpen(false)}
+        onConfirmReset={onFail}
         onRestartWithChanges={onRestartWithChanges}
       />
     </div>

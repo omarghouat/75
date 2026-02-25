@@ -33,10 +33,25 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  html, body {
-    @apply bg-black text-white antialiased overflow-x-hidden;
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    overscroll-behavior-y: none; /* Prevents pull-to-refresh bounce on some mobile browsers */
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling in WebView */
+    overscroll-behavior-y: contain;
+  }
+
+  #root {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   input, textarea {
@@ -78,4 +93,12 @@
 
 .pt-safe {
   padding-top: env(safe-area-inset-top);
+}
+
+/* Mobile scrollable container */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
 }
