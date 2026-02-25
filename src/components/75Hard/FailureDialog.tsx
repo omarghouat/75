@@ -14,9 +14,10 @@ interface FailureDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirmReset: () => void;
+  onRestartWithChanges: () => void;
 }
 
-const FailureDialog = ({ isOpen, onClose, onConfirmReset }: FailureDialogProps) => {
+const FailureDialog = ({ isOpen, onClose, onConfirmReset, onRestartWithChanges }: FailureDialogProps) => {
   const [step, setStep] = useState(1);
 
   const handleClose = () => {
@@ -26,6 +27,11 @@ const FailureDialog = ({ isOpen, onClose, onConfirmReset }: FailureDialogProps) 
 
   const handleReset = () => {
     onConfirmReset();
+    handleClose();
+  };
+
+  const handleRestartWithChanges = () => {
+    onRestartWithChanges();
     handleClose();
   };
 
@@ -50,28 +56,44 @@ const FailureDialog = ({ isOpen, onClose, onConfirmReset }: FailureDialogProps) 
 
           <div className="flex flex-col gap-3">
             {step === 1 ? (
-              <Button 
-                onClick={() => setStep(2)}
-                className="h-14 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-lg uppercase tracking-widest-custom"
-              >
-                I AGREE
-              </Button>
+              <>
+                <Button 
+                  onClick={() => setStep(2)}
+                  className="h-14 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-lg uppercase tracking-widest-custom"
+                >
+                  I AGREE
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleClose}
+                  className="text-zinc-500 hover:text-white hover:bg-transparent font-bold uppercase tracking-widest-custom text-[10px]"
+                >
+                  Wait, I didn't fail
+                </Button>
+              </>
             ) : (
-              <Button 
-                onClick={handleReset}
-                className="h-14 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-lg uppercase tracking-widest-custom"
-              >
-                NO, I WILL WIN
-              </Button>
+              <>
+                <Button 
+                  onClick={handleReset}
+                  className="h-14 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-lg uppercase tracking-widest-custom"
+                >
+                  RESTART WITH SAME TASKS
+                </Button>
+                <Button 
+                  onClick={handleRestartWithChanges}
+                  className="h-14 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-black text-lg uppercase tracking-widest-custom"
+                >
+                  MAKE CHANGES FIRST
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleClose}
+                  className="text-zinc-500 hover:text-white hover:bg-transparent font-bold uppercase tracking-widest-custom text-[10px]"
+                >
+                  Cancel
+                </Button>
+              </>
             )}
-            
-            <Button 
-              variant="ghost" 
-              onClick={handleClose}
-              className="text-zinc-500 hover:text-white hover:bg-transparent font-bold uppercase tracking-widest-custom text-[10px]"
-            >
-              Wait, I didn't fail
-            </Button>
           </div>
         </div>
       </DialogContent>

@@ -26,6 +26,7 @@ interface DashboardProps {
   profile: ChallengeState['profile'];
   onToggle: (id: string) => void;
   onFail: () => void;
+  onRestartWithChanges: () => void;
   onCompleteDay: () => void;
   onPhotoUpload: (day: number, base64: string) => void;
   onUpdateNotes: (notes: string) => void;
@@ -35,7 +36,7 @@ interface DashboardProps {
 
 const Dashboard = ({ 
   day, challenges, progress, history, photos, notes, profile,
-  onToggle, onFail, onCompleteDay, onPhotoUpload, onUpdateNotes, onUpdateReminder, onUpdateProfile
+  onToggle, onFail, onRestartWithChanges, onCompleteDay, onPhotoUpload, onUpdateNotes, onUpdateReminder, onUpdateProfile
 }: DashboardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
@@ -194,6 +195,7 @@ const Dashboard = ({
         isOpen={isFailureModalOpen} 
         onClose={() => setIsFailureModalOpen(false)} 
         onConfirmReset={onFail} 
+        onRestartWithChanges={onRestartWithChanges}
       />
     </div>
   );
