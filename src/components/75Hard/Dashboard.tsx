@@ -54,25 +54,26 @@ const Dashboard = ({
   };
 
   return (
-    <div className="space-y-0 animate-in fade-in duration-700 max-w-md mx-auto bg-black min-h-screen pb-20">
+    <div className="flex flex-col min-h-screen bg-black animate-in fade-in duration-700">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
-      {/* Header */}
-      <header className="flex items-center justify-between p-6 pt-12">
-        <div className="flex flex-col items-center">
-          <Spade className="w-12 h-12 fill-white text-white" />
-          <span className="text-[8px] font-black tracking-widest-custom mt-1">HARD</span>
+      {/* Header - Sticky for mobile */}
+      <header className="sticky top-0 z-30 bg-black/80 backdrop-blur-md border-b border-zinc-900 px-6 py-4 pt-safe flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center">
+            <Spade className="w-8 h-8 fill-white text-white" />
+            <span className="text-[6px] font-black tracking-widest-custom">HARD</span>
+          </div>
+          <h1 className="text-4xl font-impact text-rose-600">DAY {day}</h1>
         </div>
-
-        <h1 className="text-7xl font-impact text-rose-600">DAY {day}</h1>
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className="p-2 bg-zinc-900 rounded-lg border border-zinc-800">
-              <Calendar className="w-6 h-6 text-white/80" />
+            <button className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800 active:scale-95 transition-transform">
+              <Calendar className="w-6 h-6 text-white" />
             </button>
           </DialogTrigger>
-          <DialogContent className="bg-black border-zinc-800 text-white max-w-[95vw] sm:max-w-md rounded-3xl p-6 overflow-y-auto max-h-[90vh] custom-scrollbar">
+          <DialogContent className="bg-black border-zinc-800 text-white w-[92vw] max-w-md rounded-[2.5rem] p-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
             <ProgressCalendar 
               currentDay={day} 
               history={history} 
@@ -86,7 +87,12 @@ const Dashboard = ({
       </header>
 
       {/* Task List */}
-      <div className="px-6 space-y-0 border-t border-zinc-900">
+      <main className="flex-1 px-6 py-4 space-y-1">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Daily Tasks</span>
+          <span className="text-[10px] font-black uppercase tracking-widest-custom text-rose-500">{completedCount}/{totalCount} Done</span>
+        </div>
+        
         {challenges.map((challenge) => {
           const isDone = progress[challenge.id];
           const isPhotoTask = challenge.text.toLowerCase().includes('photo') || challenge.text.toLowerCase().includes('picture');
@@ -95,71 +101,75 @@ const Dashboard = ({
           return (
             <div
               key={challenge.id}
-              className="flex items-center gap-4 py-5 border-b border-zinc-900 group"
+              className={cn(
+                "flex items-center gap-4 p-4 rounded-2xl border transition-all active:scale-[0.98]",
+                isDone ? "bg-zinc-900/30 border-zinc-900" : "bg-zinc-900/50 border-zinc-800"
+              )}
+              onClick={() => {
+                if (isPhotoTask && !hasPhoto) fileInputRef.current?.click();
+                else onToggle(challenge.id);
+              }}
             >
-              <button 
-                onClick={() => {
-                  if (isPhotoTask && !hasPhoto) fileInputRef.current?.click();
-                  else onToggle(challenge.id);
-                }}
-                className="shrink-0"
-              >
+              <div className="shrink-0">
                 {isDone ? (
-                  <div className="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-full bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-900/20">
+                    <CheckCircle2 className="w-6 h-6 text-white" />
                   </div>
                 ) : isPhotoTask ? (
-                  <div className="w-8 h-8 rounded-lg border-2 border-zinc-800 flex items-center justify-center text-zinc-600">
-                    <Camera className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl border-2 border-zinc-700 flex items-center justify-center text-zinc-500">
+                    <Camera className="w-6 h-6" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-full border-2 border-zinc-800 group-hover:border-zinc-600 transition-colors" />
+                  <div className="w-10 h-10 rounded-full border-2 border-zinc-700" />
                 )}
-              </button>
+              </div>
               
               <div className="flex-1 min-w-0">
                 <h3 className={cn(
-                  "text-lg font-bold transition-all truncate",
-                  isDone ? "text-zinc-600 line-through" : "text-zinc-200"
+                  "text-base font-bold transition-all truncate",
+                  isDone ? "text-zinc-600 line-through" : "text-zinc-100"
                 )}>
                   {challenge.text}
                 </h3>
                 <button 
-                  onClick={() => setReminderTask({ id: challenge.id, name: challenge.text })}
-                  className="flex items-center gap-1.5 text-zinc-600 text-[10px] font-black uppercase tracking-widest-custom hover:text-zinc-400"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReminderTask({ id: challenge.id, name: challenge.text });
+                  }}
+                  className="flex items-center gap-1.5 text-zinc-500 text-[9px] font-black uppercase tracking-widest-custom mt-0.5"
                 >
                   <Clock className="w-3 h-3" />
-                  {challenge.reminderTime || "Add reminder"}
+                  {challenge.reminderTime || "Set Reminder"}
                 </button>
               </div>
 
               {isPhotoTask && hasPhoto && (
-                <div className="w-10 h-10 rounded-lg overflow-hidden border border-zinc-800">
+                <div className="w-12 h-12 rounded-xl overflow-hidden border border-zinc-700 shadow-md">
                   <img src={photos[day]} alt="Progress" className="w-full h-full object-cover" />
                 </div>
               )}
             </div>
           );
         })}
-      </div>
 
-      {/* Notes Section */}
-      <div className="mt-8 bg-white text-black p-6 space-y-4">
-        <h2 className="text-2xl font-impact tracking-tight">NOTES:</h2>
-        <textarea
-          value={notes}
-          onChange={(e) => onUpdateNotes(e.target.value)}
-          placeholder="Make notes of any challenges, insights, or breakthroughs you achieve."
-          className="w-full min-h-[120px] bg-transparent border-none focus:ring-0 p-0 text-base font-medium leading-relaxed placeholder:text-zinc-400 resize-none"
-        />
-      </div>
+        {/* Notes Section */}
+        <div className="mt-8 bg-white text-black rounded-[2rem] p-6 space-y-3 shadow-xl">
+          <h2 className="text-xl font-impact tracking-tight">DAILY NOTES</h2>
+          <textarea
+            value={notes}
+            onChange={(e) => onUpdateNotes(e.target.value)}
+            placeholder="How are you feeling today?"
+            className="w-full min-h-[100px] bg-transparent border-none focus:ring-0 p-0 text-sm font-medium leading-relaxed placeholder:text-zinc-400 resize-none"
+          />
+        </div>
+      </main>
 
-      {/* Footer Actions */}
-      <div className="p-6 space-y-4">
+      {/* Footer Actions - Fixed at bottom for mobile */}
+      <footer className="p-6 pb-safe space-y-3 bg-gradient-to-t from-black via-black to-transparent">
         {completedCount === totalCount && (
           <Button 
             onClick={onCompleteDay}
-            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-xl rounded-xl transition-all active:scale-[0.98] uppercase tracking-widest-custom"
+            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black text-lg rounded-2xl transition-all active:scale-[0.97] uppercase tracking-widest-custom shadow-2xl shadow-rose-900/40"
           >
             COMPLETE DAY {day}
           </Button>
@@ -167,11 +177,11 @@ const Dashboard = ({
 
         <button 
           onClick={() => setIsFailureModalOpen(true)}
-          className="w-full py-4 text-zinc-700 hover:text-rose-900 text-[10px] font-black uppercase tracking-widest-custom transition-colors"
+          className="w-full py-3 text-zinc-600 hover:text-rose-500 text-[10px] font-black uppercase tracking-widest-custom transition-colors"
         >
           I Failed Today (Restart)
         </button>
-      </div>
+      </footer>
 
       <ReminderModal 
         isOpen={reminderTask !== null}

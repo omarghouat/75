@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Plus, Trash2, ArrowRight, Spade } from 'lucide-react';
+import { Plus, Trash2, ArrowRight, Spade, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Challenge } from '@/types/challenge';
@@ -38,58 +38,68 @@ const Setup = ({ onComplete }: SetupProps) => {
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-md mx-auto">
-      <div className="text-center space-y-6">
+    <div className="flex flex-col min-h-[80vh] space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="text-center space-y-4">
         <div className="flex flex-col items-center">
           <div className="relative flex items-center justify-center">
-            <Spade className="w-16 h-16 fill-white text-white" />
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black font-black text-lg mt-[-2px]">75</span>
+            <Spade className="w-20 h-20 fill-white text-white" />
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black font-black text-2xl mt-[-2px]">75</span>
           </div>
-          <span className="text-xs font-black tracking-[0.3em] mt-2">HARD</span>
+          <span className="text-[10px] font-black tracking-[0.4em] mt-2 text-zinc-500">HARD PROGRAM</span>
         </div>
-        <h1 className="text-4xl font-impact text-white uppercase">Define Your Rules</h1>
+        <h1 className="text-5xl font-impact text-white uppercase">YOUR RULES</h1>
+        <p className="text-zinc-500 text-xs font-medium max-w-[280px] mx-auto">Customize your daily tasks. These will be your non-negotiables for the next 75 days.</p>
       </div>
 
-      <div className="space-y-1">
-        {challenges.map((challenge) => (
-          <div key={challenge.id} className="flex items-center gap-4 py-4 border-b border-zinc-800 group">
-            <div className="flex-1 text-lg font-medium text-zinc-200">
-              {challenge.text}
+      <div className="flex-1 space-y-2">
+        <div className="bg-zinc-900/30 rounded-[2rem] border border-zinc-900 p-2">
+          {challenges.map((challenge) => (
+            <div key={challenge.id} className="flex items-center gap-4 p-4 border-b border-zinc-800/50 last:border-0 group">
+              <div className="w-2 h-2 rounded-full bg-rose-600 shrink-0" />
+              <div className="flex-1 text-base font-bold text-zinc-200">
+                {challenge.text}
+              </div>
+              <button
+                onClick={() => removeChallenge(challenge.id)}
+                className="p-2 text-zinc-600 hover:text-rose-500 active:scale-90 transition-all"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
-            <button
-              onClick={() => removeChallenge(challenge.id)}
-              className="text-zinc-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        <div className="flex gap-3 pt-6">
+        <div className="flex gap-2 pt-4">
           <Input
             value={newChallenge}
             onChange={(e) => setNewChallenge(e.target.value)}
             placeholder="Add custom task..."
-            className="bg-zinc-900 border-zinc-800 text-white h-14 rounded-xl focus-visible:ring-white"
+            className="bg-zinc-900 border-zinc-800 text-white h-14 rounded-2xl focus-visible:ring-rose-600 text-base"
             onKeyDown={(e) => e.key === 'Enter' && addChallenge()}
           />
           <Button 
             onClick={addChallenge}
-            className="h-14 w-14 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white"
+            className="h-14 w-14 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white shrink-0 active:scale-95"
           >
             <Plus className="w-6 h-6" />
           </Button>
         </div>
       </div>
 
-      <Button 
-        onClick={() => onComplete(challenges)}
-        disabled={challenges.length === 0}
-        className="w-full h-16 rounded-xl bg-white hover:bg-zinc-200 text-black font-black text-xl transition-all active:scale-[0.98]"
-      >
-        CONTINUE
-        <ArrowRight className="ml-2 w-6 h-6" />
-      </Button>
+      <div className="space-y-4 pt-4">
+        <div className="flex items-center gap-2 justify-center text-zinc-600">
+          <Info className="w-4 h-4" />
+          <span className="text-[10px] font-bold uppercase tracking-widest-custom">7 tasks recommended</span>
+        </div>
+        <Button 
+          onClick={() => onComplete(challenges)}
+          disabled={challenges.length === 0}
+          className="w-full h-16 rounded-2xl bg-white hover:bg-zinc-200 text-black font-black text-xl transition-all active:scale-[0.97] shadow-xl shadow-white/5"
+        >
+          CONTINUE
+          <ArrowRight className="ml-2 w-6 h-6" />
+        </Button>
+      </div>
     </div>
   );
 };

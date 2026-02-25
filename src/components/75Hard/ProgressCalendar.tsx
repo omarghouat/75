@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import { Camera, ChevronLeft, Edit3, X, User, Clock, Upload, Share2 } from 'lucide-react';
+import { Camera, ChevronLeft, Edit3, X, User, Clock, Upload, Share2, Settings2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -37,7 +37,7 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
       dayEndTime: tempEndTime
     });
     setIsSettingsOpen(false);
-    showSuccess("Settings updated successfully");
+    showSuccess("Settings updated");
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,22 +86,21 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
   if (isSettingsOpen) {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
-        <div className="flex items-center justify-between px-2">
+        <div className="flex items-center justify-between">
           <button 
             onClick={() => setIsSettingsOpen(false)}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+            className="p-2 -ml-2 text-zinc-400 hover:text-white active:scale-90 transition-all"
           >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-xs font-bold uppercase">Back</span>
+            <ChevronLeft className="w-6 h-6" />
           </button>
-          <h3 className="font-impact text-xl tracking-tight">SETTINGS</h3>
+          <h3 className="font-impact text-2xl tracking-tight">SETTINGS</h3>
           <div className="w-10" />
         </div>
 
-        <div className="space-y-6 px-2">
-          <div className="flex flex-col items-center gap-4 mb-8">
+        <div className="space-y-6">
+          <div className="flex flex-col items-center gap-4 mb-4">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-full bg-zinc-800 overflow-hidden border-4 border-zinc-700">
+              <div className="w-28 h-28 rounded-full bg-zinc-900 overflow-hidden border-4 border-zinc-800 shadow-2xl">
                 {profile.avatar ? (
                   <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
@@ -110,9 +109,9 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
               </div>
               <button 
                 onClick={() => avatarInputRef.current?.click()}
-                className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+                className="absolute bottom-0 right-0 p-2 bg-rose-600 rounded-full border-4 border-black shadow-lg active:scale-90 transition-transform"
               >
-                <Upload className="w-6 h-6 text-white" />
+                <Camera className="w-5 h-5 text-white" />
               </button>
               <input 
                 type="file" 
@@ -122,37 +121,38 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
                 onChange={handleAvatarChange} 
               />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Tap to change photo</p>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Profile Name</label>
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-              <Input 
-                value={tempName}
-                onChange={(e) => setTempName(e.target.value)}
-                className="bg-zinc-900 border-zinc-800 pl-12 h-14 rounded-xl focus-visible:ring-rose-600"
-              />
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500 ml-1">Profile Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+                <Input 
+                  value={tempName}
+                  onChange={(e) => setTempName(e.target.value)}
+                  className="bg-zinc-900 border-zinc-800 pl-12 h-14 rounded-2xl focus-visible:ring-rose-600 text-base"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Day Ends At</label>
-            <div className="relative">
-              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-              <Input 
-                value={tempEndTime}
-                onChange={(e) => setTempEndTime(e.target.value)}
-                className="bg-zinc-900 border-zinc-800 pl-12 h-14 rounded-xl focus-visible:ring-rose-600"
-              />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500 ml-1">Day Ends At</label>
+              <div className="relative">
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+                <Input 
+                  value={tempEndTime}
+                  onChange={(e) => setTempEndTime(e.target.value)}
+                  className="bg-zinc-900 border-zinc-800 pl-12 h-14 rounded-2xl focus-visible:ring-rose-600 text-base"
+                />
+              </div>
+              <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-tight px-1">Recommended: 2:00 AM</p>
             </div>
-            <p className="text-[10px] text-zinc-500 font-medium">Most people set this to 1:00 AM or 2:00 AM to account for late workouts.</p>
           </div>
 
           <Button 
             onClick={handleSaveSettings}
-            className="w-full h-14 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-xl uppercase tracking-widest-custom mt-4"
+            className="w-full h-16 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl uppercase tracking-widest-custom mt-4 shadow-xl shadow-rose-900/20"
           >
             Save Changes
           </Button>
@@ -163,9 +163,9 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
-      <div className="flex items-center justify-between px-2">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-zinc-800 overflow-hidden border-2 border-zinc-700">
+          <div className="w-14 h-14 rounded-full bg-zinc-900 overflow-hidden border-2 border-zinc-800 shadow-lg">
             {profile.avatar ? (
               <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
             ) : (
@@ -173,93 +173,108 @@ const ProgressCalendar = ({ currentDay, history, photos, profile, onUpdateProfil
             )}
           </div>
           <div>
-            <h3 className="font-bold text-lg">{profile.name}</h3>
-            <p className="text-zinc-500 text-xs font-bold uppercase">Day Ends: {profile.dayEndTime}</p>
+            <h3 className="font-bold text-xl leading-tight">{profile.name}</h3>
+            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest-custom">Day Ends: {profile.dayEndTime}</p>
           </div>
         </div>
         <button 
           onClick={() => setIsSettingsOpen(true)}
-          className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group"
+          className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800 active:scale-90 transition-all"
         >
-          <span className="text-xs font-bold uppercase">Settings</span>
-          <Edit3 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          <Settings2 className="w-6 h-6 text-zinc-400" />
         </button>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x">
-        {Object.entries(photos).length > 0 ? (
-          Object.entries(photos).map(([day, src]) => (
-            <div key={day} className="shrink-0 w-40 aspect-[3/4] rounded-2xl overflow-hidden relative snap-center border border-zinc-800">
-              <img src={src} className="w-full h-full object-cover" alt={`Day ${day}`} />
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-                <p className="text-[10px] font-black uppercase">75 HARD</p>
-                <p className="text-xs font-bold">DAY {day}</p>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Progress Photos</span>
+          <span className="text-[10px] font-black uppercase tracking-widest-custom text-rose-500">{Object.keys(photos).length} Captured</span>
+        </div>
+        <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x -mx-2 px-2">
+          {Object.entries(photos).length > 0 ? (
+            Object.entries(photos).map(([day, src]) => (
+              <div 
+                key={day} 
+                onClick={() => setSelectedDay(Number(day))}
+                className="shrink-0 w-36 aspect-[3/4] rounded-2xl overflow-hidden relative snap-center border border-zinc-800 shadow-xl active:scale-95 transition-transform"
+              >
+                <img src={src} className="w-full h-full object-cover" alt={`Day ${day}`} />
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent">
+                  <p className="text-[8px] font-black uppercase tracking-widest-custom text-zinc-400">75 HARD</p>
+                  <p className="text-xs font-black">DAY {day}</p>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="w-full py-12 text-center border-2 border-dashed border-zinc-900 rounded-[2rem] text-zinc-700 font-black uppercase text-[10px] tracking-widest-custom">
+              No progress photos yet
             </div>
-          ))
-        ) : (
-          <div className="w-full py-10 text-center border-2 border-dashed border-zinc-900 rounded-3xl text-zinc-700 font-bold uppercase text-xs tracking-widest">
-            No progress photos yet
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-y-4 gap-x-2 px-2">
-        {days.map((day) => {
-          const isCompleted = history[day] !== undefined || day < currentDay;
-          return (
-            <button
-              key={day}
-              onClick={() => photos[day] && setSelectedDay(day)}
-              className={cn(
-                "text-center text-lg font-black transition-colors",
-                isCompleted ? "text-rose-600" : "text-zinc-800",
-                photos[day] && "underline decoration-rose-600/50 underline-offset-4"
-              )}
-            >
-              {day}
-            </button>
-          );
-        })}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Challenge Grid</span>
+          <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">{Math.round((currentDay/75)*100)}% Complete</span>
+        </div>
+        <div className="grid grid-cols-7 gap-y-5 gap-x-2">
+          {days.map((day) => {
+            const isCompleted = history[day] !== undefined || day < currentDay;
+            const isCurrent = day === currentDay;
+            return (
+              <button
+                key={day}
+                onClick={() => photos[day] && setSelectedDay(day)}
+                className={cn(
+                  "text-center text-base font-black transition-all active:scale-90",
+                  isCompleted ? "text-rose-600" : "text-zinc-800",
+                  isCurrent && "text-white scale-125",
+                  photos[day] && "underline decoration-rose-600 decoration-2 underline-offset-4"
+                )}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="text-center text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
-        Tap any completed day to view details
+      <div className="text-center text-zinc-600 text-[9px] font-black uppercase tracking-widest-custom pt-4">
+        Tap any underlined day to view photo
       </div>
-
-      <button className="w-full py-4 bg-zinc-900/50 rounded-xl flex items-center justify-center gap-3 text-sm font-bold uppercase tracking-widest border border-zinc-800 hover:bg-zinc-900 transition-colors">
-        <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-xs">i</div>
-        75 Hard Program FAQ
-      </button>
 
       <Dialog open={selectedDay !== null} onOpenChange={(open) => !open && setSelectedDay(null)}>
-        <DialogContent className="bg-black border-zinc-800 text-white p-0 overflow-hidden max-w-sm rounded-3xl">
+        <DialogContent className="bg-black border-zinc-800 text-white p-0 overflow-hidden w-[92vw] max-w-sm rounded-[2.5rem]">
           <div className="relative aspect-[3/4]">
             <img src={photos[selectedDay || 0]} className="w-full h-full object-cover" alt="Progress" />
-            <div className="absolute inset-0 p-8 flex flex-col justify-between bg-gradient-to-b from-black/40 via-transparent to-black/80">
+            <div className="absolute inset-0 p-8 flex flex-col justify-between bg-gradient-to-b from-black/60 via-transparent to-black/90">
               <div className="flex justify-between items-start">
-                <button onClick={() => setSelectedDay(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                  <X className="w-8 h-8" />
+                <button 
+                  onClick={() => setSelectedDay(null)} 
+                  className="p-3 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 active:scale-90 transition-all"
+                >
+                  <X className="w-6 h-6" />
                 </button>
-                <div className="flex gap-4">
+                <div className="flex gap-2">
                   <button 
                     onClick={handleShare}
-                    className="text-sm font-bold uppercase flex items-center gap-2 hover:text-rose-500 transition-colors"
+                    className="p-3 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 active:scale-90 transition-all"
                   >
-                    Share <Share2 className="w-4 h-4" />
+                    <Share2 className="w-5 h-5" />
                   </button>
                   <button 
                     onClick={() => replacePhotoInputRef.current?.click()}
-                    className="text-sm font-bold uppercase flex items-center gap-2 hover:text-rose-500 transition-colors"
+                    className="p-3 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 active:scale-90 transition-all"
                   >
-                    Edit <Edit3 className="w-4 h-4" />
+                    <Edit3 className="w-5 h-5" />
                   </button>
                 </div>
               </div>
-              <div>
-                <h2 className="text-5xl font-impact mb-4">DAY {selectedDay}</h2>
-                <p className="text-sm font-medium leading-relaxed text-zinc-200">
-                  Learn how to deal with discomfort and it opens the door to everything. What can stop you if you willingly seek out all the things nobody else is willing to do?
+              <div className="space-y-2">
+                <h2 className="text-6xl font-impact">DAY {selectedDay}</h2>
+                <p className="text-xs font-bold leading-relaxed text-zinc-300 uppercase tracking-tight">
+                  "Discipline is doing what needs to be done, even if you don't want to do it."
                 </p>
               </div>
             </div>

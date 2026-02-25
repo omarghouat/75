@@ -23,17 +23,24 @@
     --border: 0 0% 15%;
     --input: 0 0% 15%;
     --ring: 0 100% 50%;
-    --radius: 0.5rem;
+    --radius: 1rem;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
   }
-  body {
-    @apply bg-black text-white antialiased;
+  
+  html, body {
+    @apply bg-black text-white antialiased overflow-x-hidden;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overscroll-behavior-y: none; /* Prevents pull-to-refresh bounce on some mobile browsers */
+  }
+
+  input, textarea {
+    @apply text-base; /* Prevents iOS auto-zoom on focus */
   }
 }
 
@@ -42,13 +49,13 @@
   font-family: 'Inter Tight', 'Arial Narrow', sans-serif;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.06em;
-  line-height: 0.9;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
 }
 
 /* Wide tracking for labels and buttons */
 .tracking-widest-custom {
-  letter-spacing: 0.25em;
+  letter-spacing: 0.2em;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -62,4 +69,13 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #333;
   border-radius: 10px;
+}
+
+/* Mobile-specific safe area padding */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }
