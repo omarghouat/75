@@ -1,10 +1,4 @@
-@layer base {
-  html, body {
-    @apply overflow-y-auto;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-}
+@layer base {}
 
 @layer base {
   .custom-scrollbar::-webkit-scrollbar {

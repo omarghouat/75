@@ -130,23 +130,24 @@ const Index = () => {
   };
 
   return (
-    <div className={cn(
-      "bg-black text-white selection:bg-rose-500/30",
-      "w-full min-h-screen pb-10 flex flex-col mobile-scroll relative"
-    )}>
+    <div className="w-full h-full bg-black text-white selection:bg-rose-500/30 overflow-hidden relative flex flex-col">
       {state.status === 'setup' && (
-        <div className="flex-1 max-w-xl mx-auto px-6 py-20 w-full">
-          <Setup onComplete={handleSetupComplete} />
+        <div className="w-full h-full overflow-y-auto mobile-scroll">
+          <div className="w-full max-w-xl mx-auto px-6 pt-12 pb-[120px]">
+            <Setup onComplete={handleSetupComplete} />
+          </div>
         </div>
       )}
 
       {state.status === 'confirming' && (
-        <div className="flex-1 max-w-xl mx-auto px-6 py-20 w-full">
-          <Confirmation
-            challenges={state.challenges}
-            onBack={() => setState(prev => ({ ...prev, status: 'setup' }))}
-            onConfirm={handleConfirm}
-          />
+        <div className="w-full h-full overflow-y-auto mobile-scroll">
+          <div className="w-full max-w-xl mx-auto px-6 pt-12 pb-[120px]">
+            <Confirmation
+              challenges={state.challenges}
+              onBack={() => setState(prev => ({ ...prev, status: 'setup' }))}
+              onConfirm={handleConfirm}
+            />
+          </div>
         </div>
       )}
 
@@ -178,8 +179,8 @@ const Index = () => {
         />
       )}
 
-      {state.status !== 'success' && (
-        <footer className="pb-10 opacity-30">
+      {state.status !== 'success' && state.status !== 'active' && (
+        <footer className="absolute bottom-6 left-0 right-0 opacity-30 pointer-events-none">
           <MadeWithDyad />
         </footer>
       )}

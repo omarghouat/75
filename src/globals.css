@@ -32,8 +32,9 @@
     @apply border-border;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   html {
+    width: 100%;
     height: 100%;
     overflow: hidden;
   }
@@ -41,21 +42,24 @@
   body {
     @apply bg-black text-white antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    width: 100%;
     height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling in WebView */
-    overscroll-behavior-y: contain;
+    overflow: hidden;
+    position: fixed;
   }
 
   #root {
-    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
   }
 
-  input, textarea {
-    @apply text-base; /* Prevents iOS auto-zoom on focus */
+  input,
+  textarea {
+    @apply text-base;
+    /* Prevents iOS auto-zoom on focus */
   }
 }
 
