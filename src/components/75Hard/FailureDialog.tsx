@@ -54,7 +54,7 @@ const FailureDialog = ({ isOpen, onClose, onConfirmReset, onRestartWithChanges }
               : "Will you be a looser if you retry?"}
           </p>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 items-center justify-center">
             {step === 1 ? (
               <>
                 <Button 
