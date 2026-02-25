@@ -55,7 +55,7 @@ const Dashboard = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-black text-white selection:bg-rose-500/30 animate-in fade-in duration-700">
+    <div className="flex flex-col h-full w-full overflow-hidden bg-black text-white selection:bg-rose-500/30 animate-in fade-in duration-700">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
       {/* Header - Fixed for mobile */}
@@ -85,7 +85,7 @@ const Dashboard = ({
       </header>
 
       {/* Task List */}
-      <main className="flex-1 w-full max-w-xl mx-auto px-6 pt-[100px] pb-[160px] space-y-1">
+      <main className="flex-1 w-full max-w-xl mx-auto px-6 pt-[100px] pb-[160px] space-y-1 overflow-y-auto custom-scrollbar mobile-scroll">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Daily Tasks</span>
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-rose-500">{completedCount}/{totalCount} Done</span>
