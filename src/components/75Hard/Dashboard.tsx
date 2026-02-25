@@ -26,7 +26,7 @@ interface DashboardProps {
   profile: ChallengeState['profile'];
   onToggle: (id: string) => void;
   onFail: () => void;
-  onRestartWithChanges: () => void;
+  onRestartWithChanges: () => void; // Ensure this is implemented
   onCompleteDay: () => void;
   onPhotoUpload: (day: number, base64: string) => void;
   onUpdateNotes: (notes: string) => void;
@@ -195,7 +195,7 @@ const Dashboard = ({
         isOpen={isFailureModalOpen} 
         onClose={() => setIsFailureModalOpen(false)} 
         onConfirmReset={onFail} 
-        onRestartWithChanges={onRestartWithChanges}
+        onRestartWithChanges={onRestartWithChanges} // Pass the function
       />
     </div>
   );
