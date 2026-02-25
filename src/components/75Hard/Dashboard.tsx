@@ -54,11 +54,11 @@ const Dashboard = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black animate-in fade-in duration-700">
+    <div className="flex flex-col min-h-screen bg-black text-white selection:bg-rose-500/30 no-pull-to-refresh">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
       {/* Header - Sticky for mobile */}
-      <header className="sticky top-0 z-30 bg-black/80 backdrop-blur-md border-b border-zinc-900 px-6 py-4 pt-safe flex items-center justify-between">
+      <header className="sticky-header px-6 py-4 pt-safe flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-center">
             <Spade className="w-8 h-8 fill-white text-white" />
@@ -69,7 +69,7 @@ const Dashboard = ({
 
         <Dialog>
           <DialogTrigger asChild>
-            <button className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800 active:scale-95 transition-transform">
+            <button className="p-3 bg-zinc-900 rounded-2xl border border-zinc-800 active:scale-95 transition-transform touch-manipulation">
               <Calendar className="w-6 h-6 text-white" />
             </button>
           </DialogTrigger>
@@ -87,7 +87,7 @@ const Dashboard = ({
       </header>
 
       {/* Task List */}
-      <main className="flex-1 px-6 py-4 space-y-1">
+      <main className="flex-1 px-6 py-4 space-y-1 overflow-y-auto custom-scrollbar">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-zinc-500">Daily Tasks</span>
           <span className="text-[10px] font-black uppercase tracking-widest-custom text-rose-500">{completedCount}/{totalCount} Done</span>
@@ -102,7 +102,7 @@ const Dashboard = ({
             <div
               key={challenge.id}
               className={cn(
-                "flex items-center gap-4 p-4 rounded-2xl border transition-all active:scale-[0.98]",
+                "flex items-center gap-4 p-4 rounded-2xl border transition-all active:scale-[0.98] touch-manipulation",
                 isDone ? "bg-zinc-900/30 border-zinc-900" : "bg-zinc-900/50 border-zinc-800"
               )}
               onClick={() => {
